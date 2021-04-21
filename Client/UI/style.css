@@ -1,68 +1,68 @@
 body {
-    font-family: Roboto, sans-serif;
-    margin: 0px;
-    padding: 0px;
-    background-size: 100%;
+	font-family: Roboto, sans-serif;
+	margin: 0px;
+	padding: 0px;
+	background-size: 100%;
 }
 
 #kill_hud {
-    width: 300px;
-    height: 200px;
-    position: fixed;
-    left: 50%;
-    margin-left: -150px;
-    margin-bottom: 100px;
-    bottom: 0;
-    text-align: center;
-    color: white;
-    text-shadow: 1px 1px 1px #00000040;
+	width: 300px;
+	height: 200px;
+	position: fixed;
+	left: 50%;
+	margin-left: -150px;
+	margin-bottom: 100px;
+	bottom: 0;
+	text-align: center;
+	color: white;
+	text-shadow: 1px 1px 1px #00000040;
 }
 
 #death_name {
-    font-size: 18px;
-    position: absolute;
-    width: 100%;
-    margin-top: 5px;
+	font-size: 18px;
+	position: absolute;
+	width: 100%;
+	margin-top: 5px;
 }
 
 #total_score {
-    font-size: 32px;
-    position: absolute;
-    width: 100%;
-    margin-top: 30px;
+	font-size: 32px;
+	position: absolute;
+	width: 100%;
+	margin-top: 30px;
 }
 
 #score_feed {
-    font-size: 15px;
-    max-height: 63px;
-    overflow: hidden;
-    position: absolute;
-    width: 100%;
-    margin-top: 70px;
+	font-size: 15px;
+	max-height: 63px;
+	overflow: hidden;
+	position: absolute;
+	width: 100%;
+	margin-top: 70px;
 }
 
 .score_feed_item {
-    display: block;
-    margin: 3px;
+	display: block;
+	margin: 3px;
 }
 
 #death_counts {
-    height: 30px;
+	height: 30px;
 }
 
 .death_count {
-    display: inline-block;
-    width: 25px;
-    height: 30px;
-    background-size: 100% auto;
-    background-repeat: no-repeat;
-    margin: 0px 3px;
+	display: inline-block;
+	width: 25px;
+	height: 30px;
+	background-size: 100% auto;
+	background-repeat: no-repeat;
+	margin: 0px 3px;
 }
 
 .death_count_white {
-    background-image: url("images/skull_white.png");
+	background-image: url("images/skull_white.png");
 }
 
 .death_count_red {
-    background-image: url("images/skull_red.png");
+	background-image: url("images/skull_red.png");
 }
