@@ -12,24 +12,32 @@ Package:Subscribe("Unload", function()
 end)
 
 -- When a character takes damage, checks if I was the causer and displays it on the screen
-Character:Subscribe("TakeDamage", function(charact, damage, bone, type, from, instigator)
-	-- If I was not the causer, just ignore it
-	if (instigator ~= NanosWorld:GetLocalPlayer()) then return end
-
-	Sound(Vector(0, 0, 0), "NanosWorld::A_Hit_Feedback", true)
-
-	if (bone == "head" or last_bone_damaged == "neck_01") then
-		Sound(Vector(0, 0, 0), "NanosWorld::A_Headshot_Feedback", true)
+Character:Subscribe("TakeDamage", function(character, damage, bone, type, from, instigator)
+	local local_player = NanosWorld:GetLocalPlayer()
+	
+	-- If I was damaged, play Hit Taken sound
+	if (character:GetPlayer() == local_player) then
+		Sound(Vector(), "NanosWorld::A_HitTaken_Feedback", true)
 	end
 
-	KillHUDUI:CallEvent("AddScore", {damage, "enemy_hit", "ENEMY HIT", true})
+	-- If I was the causer, adds score
+	if (instigator == local_player) then
+		Sound(Vector(), "NanosWorld::A_Hit_Feedback", true)
+
+		-- Headshot sound effect
+		if (bone == "head" or bone == "neck_01") then
+			Sound(Vector(), "NanosWorld::A_Headshot_Feedback", true)
+		end
+
+		KillHUDUI:CallEvent("AddScore", {damage, "enemy_hit", "ENEMY HIT", true})
+	end
 end)
 
 -- When a character dies, check if I was the last one to do damage on him and displays on the screen as a kill
-Character:Subscribe("Death", function(charact, last_damage_taken, last_bone_damaged, damage_type_reason, hit_from_direction, instigator)
+Character:Subscribe("Death", function(character, last_damage_taken, last_bone_damaged, damage_type_reason, hit_from_direction, instigator)
 	if (instigator ~= NanosWorld:GetLocalPlayer()) then return end
 
-	local player = charact:GetPlayer()
+	local player = character:GetPlayer()
 
 	local name = "BOT"
 
@@ -39,7 +47,7 @@ Character:Subscribe("Death", function(charact, last_damage_taken, last_bone_dama
 	end
 
     -- Plays a sound kill feedback
-	Sound(Vector(0, 0, 0), "NanosWorld::A_Kill_Feedback", true)
+	Sound(Vector(), "NanosWorld::A_Kill_Feedback", true)
 
 	-- Gets the lat hit bone and check if it was a Headshot
 	local is_headshot = last_bone_damaged == "head" or last_bone_damaged == "neck_01"
