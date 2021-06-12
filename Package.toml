@@ -5,7 +5,7 @@
 	# Contributors
 	author =				"SyedMuhammad"
 	# Version
-	version =				"1.1.0"
+	version =				"1.2.0"
 	# Image URL
 	image =					"https://i.imgur.com/3Ei8t6s.png"
 	# Package Type: 'executable' (normal package) | 'library' (doesn't run - useful for code library)
