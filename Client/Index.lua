@@ -13,17 +13,17 @@ HitMarks = {}
 
 -- Helper for adding a Kill to the screen (skull)
 function AddKill(name, is_headshot, score)
-	KillHUDUI:CallEvent("AddKill", { name, is_headshot, score })
+	KillHUDUI.CallEvent("AddKill", name, is_headshot, score)
 end
 
-Events:Subscribe("AddKill", AddKill)
+Events.Subscribe("AddKill", AddKill)
 
 -- Helper for adding score to the screen
 function AddScore(score, id, label, use_current)
-	KillHUDUI:CallEvent("AddScore", {score, id, label, use_current})
+	KillHUDUI.CallEvent("AddScore", score, id, label, use_current)
 end
 
-Events:Subscribe("AddScore", AddScore)
+Events.Subscribe("AddScore", AddScore)
 
 Character:Subscribe("TakeDamage", function(character, damage, bone, type, from, instigator)
 	local local_player = NanosWorld:GetLocalPlayer()
@@ -89,11 +89,11 @@ Character:Subscribe("Death", function(character, last_damage_taken, last_bone_da
 	local is_headshot = last_bone_damaged == "head" or last_bone_damaged == "neck_01"
 	local is_suicide = instigator == player
 
-	KillHUDUI:CallEvent("AddKillNotification", { name, killer_name, is_headshot, is_suicide })
+	KillHUDUI.CallEvent("AddKillNotification", name, killer_name, is_headshot, is_suicide)
 
-	if (instigator ~= NanosWorld:GetLocalPlayer()) then return end
+	if (instigator ~= NanosWorld.GetLocalPlayer()) then return end
 
-	if (NanosWorld:GetLocalPlayer():GetControlledCharacter() == character) then
+	if (NanosWorld.GetLocalPlayer():GetControlledCharacter() == character) then
 		return
 	end
 
@@ -110,22 +110,22 @@ Character:Subscribe("Death", function(character, last_damage_taken, last_bone_da
 end)
 
 -- Event for configuring the Kill HUD
-Events:Subscribe("ConfigureBattlefieldKillUI", function(enable_autoscore, kill_score, headshot_score)
+Events.Subscribe("ConfigureBattlefieldKillUI", function(enable_autoscore, kill_score, headshot_score)
 	KillHUDUIConfiguration.enable_autoscore = enable_autoscore
 	KillHUDUIConfiguration.kill_score = kill_score
 	KillHUDUIConfiguration.headshot_score = headshot_score
 end)
 
 -- On Tick, updates all HitMarks
-Client:Subscribe("Tick", function(delta_time)
+Client.Subscribe("Tick", function(delta_time)
 	for k, h in ipairs(HitMarks) do
 		h.cooldown = h.cooldown - delta_time * 1000
 		if (h.cooldown <= 0) then
-			KillHUDUI:CallEvent("UpdateDamageIndicator", {h.id, false})
+			KillHUDUI.CallEvent("UpdateDamageIndicator", h.id, false)
 			table.remove(HitMarks, k)
 		else
-			local position2D = Render:Project(h.location)
-			KillHUDUI:CallEvent("UpdateDamageIndicator", {h.id, true, position2D.X, position2D.Y})
+			local position2D = Render.Project(h.location)
+			KillHUDUI.CallEvent("UpdateDamageIndicator", h.id, true, position2D.X, position2D.Y)
 		end
 	end
 end)
