@@ -13,20 +13,20 @@ HitMarks = {}
 
 -- Helper for adding a Kill to the screen (skull)
 function AddKill(name, is_headshot, score)
-	KillHUDUI.CallEvent("AddKill", name, is_headshot, score)
+	KillHUDUI:CallEvent("AddKill", name, is_headshot, score)
 end
 
 Events.Subscribe("AddKill", AddKill)
 
 -- Helper for adding score to the screen
 function AddScore(score, id, label, use_current)
-	KillHUDUI.CallEvent("AddScore", score, id, label, use_current)
+	KillHUDUI:CallEvent("AddScore", score, id, label, use_current)
 end
 
 Events.Subscribe("AddScore", AddScore)
 
 Character.Subscribe("TakeDamage", function(character, damage, bone, type, from, instigator)
-	local local_player = NanosWorld:GetLocalPlayer()
+	local local_player = Client.GetLocalPlayer()
 
 	-- If I was damaged, play Hit Taken sound and displays a Hit Mark
 	if (character:GetPlayer() == local_player) then
@@ -89,7 +89,7 @@ Character.Subscribe("Death", function(character, last_damage_taken, last_bone_da
 	local is_headshot = last_bone_damaged == "head" or last_bone_damaged == "neck_01"
 	local is_suicide = instigator == player
 
-	KillHUDUI.CallEvent("AddKillNotification", name, killer_name, is_headshot, is_suicide)
+	KillHUDUI:CallEvent("AddKillNotification", name, killer_name, is_headshot, is_suicide)
 
 	if (instigator ~= Client.GetLocalPlayer()) then return end
 
@@ -121,11 +121,11 @@ Client.Subscribe("Tick", function(delta_time)
 	for k, h in ipairs(HitMarks) do
 		h.cooldown = h.cooldown - delta_time * 1000
 		if (h.cooldown <= 0) then
-			KillHUDUI.CallEvent("UpdateDamageIndicator", h.id, false)
+			KillHUDUI:CallEvent("UpdateDamageIndicator", h.id, false)
 			table.remove(HitMarks, k)
 		else
 			local position2D = Render.Project(h.location)
-			KillHUDUI.CallEvent("UpdateDamageIndicator", h.id, true, position2D.X, position2D.Y)
+			KillHUDUI:CallEvent("UpdateDamageIndicator", h.id, true, position2D.X, position2D.Y)
 		end
 	end
 end)
