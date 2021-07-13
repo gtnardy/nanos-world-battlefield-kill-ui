@@ -25,12 +25,12 @@ end
 
 Events.Subscribe("AddScore", AddScore)
 
-Character:Subscribe("TakeDamage", function(character, damage, bone, type, from, instigator)
+Character.Subscribe("TakeDamage", function(character, damage, bone, type, from, instigator)
 	local local_player = NanosWorld:GetLocalPlayer()
 
 	-- If I was damaged, play Hit Taken sound and displays a Hit Mark
 	if (character:GetPlayer() == local_player) then
-		Sound(Vector(), "NanosWorld::A_HitTaken_Feedback", true)
+		Sound(Vector(), "nanos-world::A_HitTaken_Feedback", true)
 		KillHUDUIConfiguration.current_damage_id = KillHUDUIConfiguration.current_damage_id + 1
 
 		local location = Vector()
@@ -55,11 +55,11 @@ Character:Subscribe("TakeDamage", function(character, damage, bone, type, from, 
 		end
 
 		-- Play Hit audio feedback
-		Sound(Vector(), "NanosWorld::A_Hit_Feedback", true)
+		Sound(Vector(), "nanos-world::A_Hit_Feedback", true)
 
 		-- Headshot sound effect
 		if (bone == "head" or bone == "neck_01") then
-			Sound(Vector(), "NanosWorld::A_Headshot_Feedback", true)
+			Sound(Vector(), "nanos-world::A_Headshot_Feedback", true)
 		end
 
 		-- If we should add score, or other package will do it
@@ -70,7 +70,7 @@ Character:Subscribe("TakeDamage", function(character, damage, bone, type, from, 
 end)
 
 -- When a character dies, check if I was the last one to do damage on him and displays on the screen as a kill
-Character:Subscribe("Death", function(character, last_damage_taken, last_bone_damaged, damage_type_reason, hit_from_direction, instigator)
+Character.Subscribe("Death", function(character, last_damage_taken, last_bone_damaged, damage_type_reason, hit_from_direction, instigator)
 	local player = character:GetPlayer()
 
 	local name = "BOT"
@@ -91,14 +91,14 @@ Character:Subscribe("Death", function(character, last_damage_taken, last_bone_da
 
 	KillHUDUI.CallEvent("AddKillNotification", name, killer_name, is_headshot, is_suicide)
 
-	if (instigator ~= NanosWorld.GetLocalPlayer()) then return end
+	if (instigator ~= Client.GetLocalPlayer()) then return end
 
-	if (NanosWorld.GetLocalPlayer():GetControlledCharacter() == character) then
+	if (Client.GetLocalPlayer():GetControlledCharacter() == character) then
 		return
 	end
 
     -- Plays a sound kill feedback
-	Sound(Vector(), "NanosWorld::A_Kill_Feedback", true)
+	Sound(Vector(), "nanos-world::A_Kill_Feedback", true)
 
 	if (is_headshot) then
 		if (KillHUDUIConfiguration.enable_autoscore) then
