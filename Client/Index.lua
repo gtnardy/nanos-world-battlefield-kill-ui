@@ -5,7 +5,6 @@ KillHUDUIConfiguration = {
 	enable_autoscore = true,
 	kill_score = 20,
 	headshot_score = 20,
-	current_damage_id = 1,
 }
 
 -- List of spawned HitMarks
@@ -25,24 +24,24 @@ end
 
 Events.Subscribe("AddScore", AddScore)
 
-Character.Subscribe("TakeDamage", function(character, damage, bone, type, from, instigator)
+Character.Subscribe("TakeDamage", function(character, damage, bone, type, from, instigator, causer)
 	local local_player = Client.GetLocalPlayer()
 
 	-- If I was damaged, play Hit Taken sound and displays a Hit Mark
 	if (character:GetPlayer() == local_player) then
 		Sound(Vector(), "nanos-world::A_HitTaken_Feedback", true)
-		KillHUDUIConfiguration.current_damage_id = KillHUDUIConfiguration.current_damage_id + 1
 
-		local location = Vector()
 		if (instigator) then
 			local character_instigator = instigator:GetControlledCharacter()
 
 			if (character_instigator) then
-				location = character_instigator:GetLocation()
+				HitMarks[instigator:GetID()] = {
+					cooldown = 2000,
+					location = character_instigator:GetLocation(),
+				}
 			end
 		end
 
-		table.insert(HitMarks, { id = KillHUDUIConfiguration.current_damage_id, cooldown = 2000, location = location })
 		return
 	end
 
@@ -64,13 +63,17 @@ Character.Subscribe("TakeDamage", function(character, damage, bone, type, from, 
 
 		-- If we should add score, or other package will do it
 		if (KillHUDUIConfiguration.enable_autoscore) then
-			AddScore(damage, "enemy_hit", "ENEMY HIT", true)
+			-- Clamps the damage to Health
+			local health = character:GetHealth()
+			local true_damage = health < damage and health or damage
+
+			AddScore(true_damage, "enemy_hit", "ENEMY HIT", true)
 		end
 	end
 end)
 
 -- When a character dies, check if I was the last one to do damage on him and displays on the screen as a kill
-Character.Subscribe("Death", function(character, last_damage_taken, last_bone_damaged, damage_type_reason, hit_from_direction, instigator)
+Character.Subscribe("Death", function(character, last_damage_taken, last_bone_damaged, damage_type_reason, hit_from_direction, instigator, causer)
 	local player = character:GetPlayer()
 
 	local name = "BOT"
@@ -118,14 +121,14 @@ end)
 
 -- On Tick, updates all HitMarks
 Client.Subscribe("Tick", function(delta_time)
-	for k, h in ipairs(HitMarks) do
+	for id, h in pairs(HitMarks) do
 		h.cooldown = h.cooldown - delta_time * 1000
 		if (h.cooldown <= 0) then
-			KillHUDUI:CallEvent("UpdateDamageIndicator", h.id, false)
-			table.remove(HitMarks, k)
+			KillHUDUI:CallEvent("UpdateDamageIndicator", id, false)
+			HitMarks[id] = nil
 		else
 			local position2D = Render.Project(h.location)
-			KillHUDUI:CallEvent("UpdateDamageIndicator", h.id, true, position2D.X, position2D.Y)
+			KillHUDUI:CallEvent("UpdateDamageIndicator", id, true, position2D.X, position2D.Y)
 		end
 	end
 end)

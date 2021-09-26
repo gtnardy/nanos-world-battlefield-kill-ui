@@ -84,8 +84,8 @@ body {
 	text-align: right;
 	height: 235px;
 	color: white;
-	margin-top: 30px;
-	margin-right: 30px;
+	margin-top: 50px;
+	margin-right: 50px;
 	overflow: clip;
 	display: flex;
 	flex-direction: column-reverse;
