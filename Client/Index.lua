@@ -31,15 +31,11 @@ Character.Subscribe("TakeDamage", function(character, damage, bone, type, from, 
 	if (character:GetPlayer() == local_player) then
 		Sound(Vector(), "nanos-world::A_HitTaken_Feedback", true)
 
-		if (instigator) then
-			local character_instigator = instigator:GetControlledCharacter()
-
-			if (character_instigator) then
-				HitMarks[instigator:GetID()] = {
-					cooldown = 2000,
-					location = character_instigator:GetLocation(),
-				}
-			end
+		if (causer) then
+			HitMarks[causer:GetID()] = {
+				cooldown = 2000,
+				location = causer:GetLocation(),
+			}
 		end
 
 		return
@@ -90,7 +86,7 @@ Character.Subscribe("Death", function(character, last_damage_taken, last_bone_da
 
 	-- Gets the lat hit bone and check if it was a Headshot
 	local is_headshot = last_bone_damaged == "head" or last_bone_damaged == "neck_01"
-	local is_suicide = instigator == player
+	local is_suicide = instigator == player or damage_type_reason == DamageType.Fall or damage_type_reason == DamageType.RunOverProp
 
 	KillHUDUI:CallEvent("AddKillNotification", name, killer_name, is_headshot, is_suicide)
 
