@@ -64,7 +64,7 @@ Events.Subscribe("AddKill", function(name, is_headshot, score) {
 	total_score += score;
 
 	// Displays the killed name
-	$("#death_name").html(`${name} +${score}`);
+	$("#death_name").html(`${name}${score > 0 ? (" +" + score) : ""}`);
 
 	// If it was headshot, displays the red skull, otherwise displays the white
 	const death_count_white = $(`<span class='death_count ${is_headshot ? "death_count_red" : "death_count_white"}'>`);

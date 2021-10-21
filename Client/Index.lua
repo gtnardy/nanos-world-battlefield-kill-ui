@@ -2,9 +2,9 @@
 KillHUDUI = WebUI("KillHUD", "file:///UI/index.html")
 
 KillHUDUIConfiguration = {
-	enable_autoscore = true,
-	kill_score = 20,
-	headshot_score = 20,
+	enable_autodamagescore = true,
+	kill_autoscore = 20,
+	headshot_autoscore = 20,
 }
 
 -- List of spawned HitMarks
@@ -58,7 +58,7 @@ Character.Subscribe("TakeDamage", function(character, damage, bone, type, from, 
 		end
 
 		-- If we should add score, or other package will do it
-		if (KillHUDUIConfiguration.enable_autoscore) then
+		if (KillHUDUIConfiguration.enable_autodamagescore) then
 			-- Clamps the damage to Health
 			local health = character:GetHealth()
 			local true_damage = health < damage and health or damage
@@ -100,19 +100,17 @@ Character.Subscribe("Death", function(character, last_damage_taken, last_bone_da
 	Sound(Vector(), "nanos-world::A_Kill_Feedback", true)
 
 	if (is_headshot) then
-		if (KillHUDUIConfiguration.enable_autoscore) then
-			AddScore(KillHUDUIConfiguration.headshot_score, "headshot", "HEADSHOT", false)
-		end
+		AddScore(KillHUDUIConfiguration.headshot_autoscore, "headshot", "HEADSHOT", false)
 	end
 
-	AddKill(name, is_headshot, KillHUDUIConfiguration.kill_score)
+	AddKill(name, is_headshot, KillHUDUIConfiguration.kill_autoscore)
 end)
 
 -- Event for configuring the Kill HUD
-Events.Subscribe("ConfigureBattlefieldKillUI", function(enable_autoscore, kill_score, headshot_score)
-	KillHUDUIConfiguration.enable_autoscore = enable_autoscore
-	KillHUDUIConfiguration.kill_score = kill_score
-	KillHUDUIConfiguration.headshot_score = headshot_score
+Events.Subscribe("ConfigureBattlefieldKillUI", function(enable_autodamagescore, kill_autoscore, headshot_autoscore)
+	KillHUDUIConfiguration.enable_autodamagescore = enable_autodamagescore
+	KillHUDUIConfiguration.kill_autoscore = kill_autoscore
+	KillHUDUIConfiguration.headshot_autoscore = headshot_autoscore
 end)
 
 -- On Tick, updates all HitMarks
