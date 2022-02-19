@@ -121,7 +121,7 @@ Client.Subscribe("Tick", function(delta_time)
 			KillHUDUI:CallEvent("UpdateDamageIndicator", id, false)
 			HitMarks[id] = nil
 		else
-			local position2D = Render.Project(h.location)
+			local position2D = Client.ProjectWorldToScreen(h.location)
 			KillHUDUI:CallEvent("UpdateDamageIndicator", id, true, position2D.X, position2D.Y)
 		end
 	end
