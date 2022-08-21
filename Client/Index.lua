@@ -1,5 +1,5 @@
 -- Spawns the UI Instance
-KillHUDUI = WebUI("KillHUD", "file:///UI/index.html")
+KillHUDUI = WebUI("KillHUD", "file://UI/index.html")
 
 KillHUDUIConfiguration = {
 	enable_autodamagescore = true,
@@ -25,6 +25,9 @@ end
 Events.Subscribe("AddScore", AddScore)
 
 Character.Subscribe("TakeDamage", function(character, damage, bone, type, from, instigator, causer)
+	-- Skips 0 Damage
+	if (damage == 0) then return end
+
 	local local_player = Client.GetLocalPlayer()
 
 	-- If I was damaged, play Hit Taken sound and displays a Hit Mark
@@ -87,12 +90,28 @@ Character.Subscribe("Death", function(character, last_damage_taken, last_bone_da
 	-- Gets the lat hit bone and check if it was a Headshot
 	local is_headshot = last_bone_damaged == "head" or last_bone_damaged == "neck_01"
 	local is_suicide = instigator == player or damage_type_reason == DamageType.Fall or damage_type_reason == DamageType.RunOverProp
+	local action = "killed"
 
-	KillHUDUI:CallEvent("AddKillNotification", name, killer_name, is_headshot, is_suicide)
+	if (is_suicide) then
+		action = "suicided"
+	elseif (damage_type_reason == DamageType.Explosion) then
+		action = "exploded"
+	elseif (damage_type_reason == DamageType.Melee) then
+		action = "slaughtered"
+	elseif (damage_type_reason == DamageType.Punch) then
+		action = "crumpled"
+	elseif (damage_type_reason == DamageType.RunOverProp) then
+		action = "prop killed"
+	elseif (damage_type_reason == DamageType.RunOverVehicle) then
+		action = "ran over"
+	end
 
-	if (instigator ~= Client.GetLocalPlayer()) then return end
+	KillHUDUI:CallEvent("AddKillNotification", name, killer_name, is_headshot, is_suicide, action)
 
-	if (Client.GetLocalPlayer():GetControlledCharacter() == character) then
+	local local_player = Client.GetLocalPlayer()
+	if (instigator ~= local_player) then return end
+
+	if (local_player:GetControlledCharacter() == character) then
 		return
 	end
 

@@ -1,22 +1,26 @@
-var timeout_hud;
-var interval_score;
-var total_score = 0;
-var total_score_current = 0;
+let timeout_hud;
+let interval_score;
+let total_score = 0;
+let total_score_current = 0;
 
 
+// Gets the angle between two coordinates X, Y
 function CalculateAngleBetweenPoints(x0, y0, x1, y1) {
 	return Math.atan2(y1 - y0, x1 - x0) * 180 / Math.PI;
 }
 
 Events.Subscribe("UpdateDamageIndicator", function(id, enable, posX, posY) {
+	// Tries to get the DOM element
 	let element = $(`#${id}`);
 
 	if (enable) {
+		// If doesn't exist, create it
 		if (!element.length) {
 			element = $(`<span id='${id}' class='damage_indicator'>`);
 			$("#damage_indicators").append(element);
 		}
-		
+
+		// Gets the angle to set the indicator rotation
 		let angle = 0;
 		if (posX == -1 && posY == -1) {
 			angle = 180;
@@ -27,6 +31,7 @@ Events.Subscribe("UpdateDamageIndicator", function(id, enable, posX, posY) {
 			angle = CalculateAngleBetweenPoints(screen_width_center, screen_height_center, posX, posY) + 90;
 		}
 
+		// Sets the indicator rotation
 		element.css("transform", `translate(-50%, -50%) rotate(${angle}deg)`);
 	} else {
 		if (element.length)
@@ -74,27 +79,28 @@ Events.Subscribe("AddKill", function(name, is_headshot, score) {
 	DisplayHUD();
 });
 
-Events.Subscribe("AddKillNotification", function(dead_name, killer_name, is_headshot, is_suicide) {
+Events.Subscribe("AddKillNotification", function(dead_name, killer_name, is_headshot, is_suicide, action) {
 	const kill_notification_item = $(`<span class='kill_notification'>`);
 
-	if (!is_suicide) {
-		const kill_notification_killer = $(`<span class='kill_notification_killer'>`);
-		kill_notification_killer.html(killer_name);
-		kill_notification_item.append(kill_notification_killer);
-	}
+	// Display suicide in the left, otherwise the killer
+	const kill_notification_killer = $(`<span class='kill_notification_killer'>`);
+	kill_notification_killer.html(is_suicide ? dead_name : killer_name);
+	kill_notification_item.append(kill_notification_killer);
 
 	const kill_notification_action = $(`<span class='kill_notification_action'>`);
-	kill_notification_action.html(is_suicide ? "suicided" : "killed");
+	kill_notification_action.html(action);
 	kill_notification_item.append(kill_notification_action);
-	
+
 	if (is_headshot) {
 		const kill_notification_headshot = $(`<span class='kill_notification_headshot'>`);
 		kill_notification_item.append(kill_notification_headshot);
 	}
-	
-	const kill_notification_dead = $(`<span class='kill_notification_dead'>`);
-	kill_notification_dead.html(dead_name);
-	kill_notification_item.append(kill_notification_dead);
+
+	if (!is_suicide) {
+		const kill_notification_dead = $(`<span class='kill_notification_dead'>`);
+		kill_notification_dead.html(dead_name);
+		kill_notification_item.append(kill_notification_dead);
+	}
 
 	$("#kill_notifications").prepend(kill_notification_item);
 
