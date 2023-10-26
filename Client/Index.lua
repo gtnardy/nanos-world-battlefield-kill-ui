@@ -24,7 +24,7 @@ end
 
 Events.Subscribe("AddScore", AddScore)
 
-Character.Subscribe("TakeDamage", function(character, damage, bone, type, from, instigator, causer)
+function OnCharacterDamage(character, damage, bone, type, from, instigator, causer)
 	-- Skips 0 Damage
 	if (damage == 0) then return end
 
@@ -69,10 +69,10 @@ Character.Subscribe("TakeDamage", function(character, damage, bone, type, from, 
 			AddScore(true_damage, "enemy_hit", "ENEMY HIT", true)
 		end
 	end
-end)
+end
 
 -- When a character dies, check if I was the last one to do damage on him and displays on the screen as a kill
-Character.Subscribe("Death", function(character, last_damage_taken, last_bone_damaged, damage_type_reason, hit_from_direction, instigator, causer)
+function OnCharacterDeath(character, last_damage_taken, last_bone_damaged, damage_type_reason, hit_from_direction, instigator, causer)
 	local player = character:GetPlayer()
 
 	local name = "BOT"
@@ -123,7 +123,7 @@ Character.Subscribe("Death", function(character, last_damage_taken, last_bone_da
 	end
 
 	AddKill(name, is_headshot, KillHUDUIConfiguration.kill_autoscore)
-end)
+end
 
 -- Event for configuring the Kill HUD
 Events.Subscribe("ConfigureBattlefieldKillUI", function(enable_autodamagescore, kill_autoscore, headshot_autoscore)
@@ -131,6 +131,12 @@ Events.Subscribe("ConfigureBattlefieldKillUI", function(enable_autodamagescore, 
 	KillHUDUIConfiguration.kill_autoscore = kill_autoscore
 	KillHUDUIConfiguration.headshot_autoscore = headshot_autoscore
 end)
+
+Character.Subscribe("Death", OnCharacterDeath)
+Character.Subscribe("TakeDamage", OnCharacterDamage)
+
+CharacterSimple.Subscribe("TakeDamage", OnCharacterDamage)
+CharacterSimple.Subscribe("Death", OnCharacterDeath)
 
 -- On Tick, updates all HitMarks
 Client.Subscribe("Tick", function(delta_time)
