@@ -135,8 +135,8 @@ end)
 Character.Subscribe("Death", OnCharacterDeath)
 Character.Subscribe("TakeDamage", OnCharacterDamage)
 
-CharacterSimple.Subscribe("TakeDamage", OnCharacterDamage)
 CharacterSimple.Subscribe("Death", OnCharacterDeath)
+CharacterSimple.Subscribe("TakeDamage", OnCharacterDamage)
 
 -- On Tick, updates all HitMarks
 Client.Subscribe("Tick", function(delta_time)
