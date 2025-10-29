@@ -2,10 +2,12 @@
 KillHUDUI = WebUI("KillHUD", "file://UI/index.html")
 
 KillHUDUIConfiguration = {
-	enable_autodamagescore = true,
-	kill_autoscore = 20,
-	headshot_autoscore = 20,
+	enable_auto_damage_score = true,
+	kill_auto_score = 20,
+	headshot_auto_score = 20,
 }
+
+Package.Export("KillHUDUIConfiguration", KillHUDUIConfiguration)
 
 -- List of spawned HitMarks
 HitMarks = {}
@@ -26,7 +28,7 @@ Events.Subscribe("AddScore", AddScore)
 
 function OnCharacterDamage(character, damage, bone, type, from, instigator, causer)
 	-- Skips 0 Damage
-	if (damage == 0) then return end
+	if (damage == 0 or character:IsDead()) then return end
 
 	local local_player = Client.GetLocalPlayer()
 
@@ -61,7 +63,7 @@ function OnCharacterDamage(character, damage, bone, type, from, instigator, caus
 		end
 
 		-- If we should add score, or other package will do it
-		if (KillHUDUIConfiguration.enable_autodamagescore) then
+		if (KillHUDUIConfiguration.enable_auto_damage_score) then
 			-- Clamps the damage to Health
 			local health = character:GetHealth()
 			local true_damage = health < damage and health or damage
@@ -119,18 +121,12 @@ function OnCharacterDeath(character, last_damage_taken, last_bone_damaged, damag
 	Sound(Vector(), "nanos-world::A_Kill_Feedback", true)
 
 	if (is_headshot) then
-		AddScore(KillHUDUIConfiguration.headshot_autoscore, "headshot", "HEADSHOT", false)
+		AddScore(KillHUDUIConfiguration.headshot_auto_score, "headshot", "HEADSHOT", false)
 	end
 
-	AddKill(name, is_headshot, KillHUDUIConfiguration.kill_autoscore)
+	AddKill(name, is_headshot, KillHUDUIConfiguration.kill_auto_score)
 end
 
--- Event for configuring the Kill HUD
-Events.Subscribe("ConfigureBattlefieldKillUI", function(enable_autodamagescore, kill_autoscore, headshot_autoscore)
-	KillHUDUIConfiguration.enable_autodamagescore = enable_autodamagescore
-	KillHUDUIConfiguration.kill_autoscore = kill_autoscore
-	KillHUDUIConfiguration.headshot_autoscore = headshot_autoscore
-end)
 
 Character.Subscribe("Death", OnCharacterDeath)
 Character.Subscribe("TakeDamage", OnCharacterDamage)
@@ -146,7 +142,7 @@ Client.Subscribe("Tick", function(delta_time)
 			KillHUDUI:CallEvent("UpdateDamageIndicator", id, false)
 			HitMarks[id] = nil
 		else
-			local position2D = Client.ProjectWorldToScreen(h.location)
+			local position2D = Viewport.ProjectWorldToScreen(h.location)
 			KillHUDUI:CallEvent("UpdateDamageIndicator", id, true, position2D.X, position2D.Y)
 		end
 	end
