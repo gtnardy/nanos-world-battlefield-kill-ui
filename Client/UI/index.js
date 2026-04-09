@@ -69,7 +69,7 @@ Events.Subscribe("AddKill", function(name, is_headshot, score) {
 	total_score += score;
 
 	// Displays the killed name
-	$("#death_name").html(`${name}${score > 0 ? (" +" + score) : ""}`);
+	$("#death_name").text(`${name}${score > 0 ? (" +" + score) : ""}`);
 
 	// If it was headshot, displays the red skull, otherwise displays the white
 	const death_count_white = $(`<span class='death_count ${is_headshot ? "death_count_red" : "death_count_white"}'>`);
@@ -84,11 +84,11 @@ Events.Subscribe("AddKillNotification", function(dead_name, killer_name, is_head
 
 	// Display suicide in the left, otherwise the killer
 	const kill_notification_killer = $(`<span class='kill_notification_killer'>`);
-	kill_notification_killer.html(is_suicide ? dead_name : killer_name);
+	kill_notification_killer.text(is_suicide ? dead_name : killer_name);
 	kill_notification_item.append(kill_notification_killer);
 
 	const kill_notification_action = $(`<span class='kill_notification_action'>`);
-	kill_notification_action.html(action);
+	kill_notification_action.text(action);
 	kill_notification_item.append(kill_notification_action);
 
 	if (is_headshot) {
@@ -98,7 +98,7 @@ Events.Subscribe("AddKillNotification", function(dead_name, killer_name, is_head
 
 	if (!is_suicide) {
 		const kill_notification_dead = $(`<span class='kill_notification_dead'>`);
-		kill_notification_dead.html(dead_name);
+		kill_notification_dead.text(dead_name);
 		kill_notification_item.append(kill_notification_dead);
 	}
 
