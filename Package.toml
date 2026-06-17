@@ -5,7 +5,7 @@
     # contributors
     author =                "SyedMuhammad"
     # version
-    version =               "1.7.0"
+    version =               "1.7.1"
 
 # script configurations
 [script]
@@ -19,13 +19,13 @@
     compatibility_version = "1.94"
     # packages requirements
     packages_requirements = [
-                            
+
     ]
     # asset packs requirements
     assets_requirements = [
-                            
+
     ]
     # compatible game modes
     compatible_game_modes = [
-                            
+
     ]
